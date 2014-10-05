@@ -1,3 +1,3 @@
-import libs.__main__
+import desires.__main__
 if __name__ == "__main__":
-    libs.__main__.main()
+    desires.__main__.main()
