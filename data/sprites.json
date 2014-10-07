@@ -1,0 +1,102 @@
+{"frames": [
+
+{
+	"filename": "hero/normal.png",
+	"frame": {"x":2,"y":2,"w":32,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":64},
+	"sourceSize": {"w":32,"h":64},
+	"pivot": {"x":0.5,"y":0.5}
+},
+{
+	"filename": "hero/walk-0.png",
+	"frame": {"x":36,"y":2,"w":32,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":64},
+	"sourceSize": {"w":32,"h":64},
+	"pivot": {"x":0.5,"y":0.5}
+},
+{
+	"filename": "hero/walk-1.png",
+	"frame": {"x":70,"y":2,"w":32,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":64},
+	"sourceSize": {"w":32,"h":64},
+	"pivot": {"x":0.5,"y":0.5}
+},
+{
+	"filename": "skeleton/frame-1.png",
+	"frame": {"x":2,"y":68,"w":32,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":64},
+	"sourceSize": {"w":32,"h":64},
+	"pivot": {"x":0.5,"y":0.5}
+},
+{
+	"filename": "skeleton/frame-2.png",
+	"frame": {"x":36,"y":68,"w":32,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":64},
+	"sourceSize": {"w":32,"h":64},
+	"pivot": {"x":0.5,"y":0.5}
+},
+{
+	"filename": "weapons/12.png",
+	"frame": {"x":70,"y":68,"w":32,"h":8},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":8},
+	"sourceSize": {"w":32,"h":8},
+	"pivot": {"x":0.5,"y":0.5}
+},
+{
+	"filename": "weapons/chainsaw-0.png",
+	"frame": {"x":2,"y":134,"w":32,"h":8},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":8},
+	"sourceSize": {"w":32,"h":8},
+	"pivot": {"x":0.5,"y":0.5}
+},
+{
+	"filename": "weapons/chainsaw-1.png",
+	"frame": {"x":2,"y":134,"w":32,"h":8},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":8},
+	"sourceSize": {"w":32,"h":8},
+	"pivot": {"x":0.5,"y":0.5}
+},
+{
+	"filename": "weapons/gun.png",
+	"frame": {"x":36,"y":134,"w":32,"h":8},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":8},
+	"sourceSize": {"w":32,"h":8},
+	"pivot": {"x":0.5,"y":0.5}
+},
+{
+	"filename": "weapons/rifle.png",
+	"frame": {"x":70,"y":134,"w":32,"h":8},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":8},
+	"sourceSize": {"w":32,"h":8},
+	"pivot": {"x":0.5,"y":0.5}
+}],
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "sprite_sheet.png",
+	"format": "RGBA8888",
+	"size": {"w":128,"h":256},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:a5228b39a61409b71ae9eb65477e74e5:d77e7898fd0e663692be261b2c662270:9b4ff79787e23e0dacb235f9ec5c4c7e$"
+}
+}

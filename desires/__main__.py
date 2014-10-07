@@ -5,10 +5,10 @@ from .scene import TestScene, MainMenuScene
 
 class Control():
     def __init__(self):
-        self.screen_size = (640,480)
+        self.screen_size = (800,600)
         self.flags = pygame.DOUBLEBUF|pygame.HWSURFACE
         self._screen = pygame.display.set_mode(self.screen_size, self.flags)
-        self.screen = self._screen.convert().subsurface(0,0,640,480)
+        self.screen = self._screen.convert().subsurface(0,0,800,600)
         
         self.clock = pygame.time.Clock()
         self.fps = 60

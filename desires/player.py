@@ -13,7 +13,7 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.Surface((32, 32))
         self.rect = self.image.get_rect()
 
-        self.speed = 5
+        self.speed = .50
         self.vx = 0
         self.vy = 0
 
@@ -25,6 +25,7 @@ class Player(pygame.sprite.Sprite):
         self.image.fill((255, 0, 0))
 
     def handle_events(self, key):
+        self.runing = False
 
         if key[pygame.K_RIGHT]:
             self.runing = True
@@ -59,7 +60,6 @@ class Player(pygame.sprite.Sprite):
         self.rect.left += self.vx
         self.rect.top += self.vy
 
-        self.runing = False
 
     def render(self, screen):        
         screen.blit(self.image, self.rect)
