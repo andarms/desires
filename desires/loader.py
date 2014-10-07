@@ -4,14 +4,17 @@ from threading import Thread
 import pygame
 import data
 
+pygame.init()
+
 class Loader(Thread):    
     
     def __init__(self):
+        super(Loader, self).__init__()
         self.done = False
-        self.image2load  = []
-        self.frames = []
-        self.sounds = []
+        self.image2load  = ''
         self.sounds2load = []
+        self.frames = {}
+        self.sounds = {}
         self.json_file = ''
 
 
@@ -32,11 +35,11 @@ class Loader(Thread):
         return image
 
     def generate_frames(self, filename, json_file):
-        frames = []
+        frames = {}
         image = self.load_image(filename, True, True)
         j_file=open(json_file)
         data = json.load(j_file)
-        json_file.close()
+        j_file.close()
 
         for frame in data['frames']:
             name = frame['filename'][:-4]
@@ -52,13 +55,17 @@ class Loader(Thread):
         return frames
 
     def load_sounds(self):
-        sounds = []
+        sounds = {}
         for s in self.sounds2load:
+            name = s[:-4]
+            s = data.filepath(s, 'sounds')
             sound = pygame.mixer.Sound(s)
-            sounds.append(sound)
+            sounds[name] = sound
         return sounds
 
     def run(self):
+        print 'start loading'
         self.frames = self.generate_frames(self.image2load, self.json_file)
         self.sounds = self.load_sounds()
+        print 'done loading'
         self.done = True

@@ -1,19 +1,35 @@
 import sys
 import pygame
 
-from .scene import TestScene, MainMenuScene
+import data
+from .scene import TestScene, SplashScene
+from loader import Loader
 
 class Control():
     def __init__(self):
-        self.screen_size = (800,600)
+        self.screen_size = (640,480)
         self.flags = pygame.DOUBLEBUF|pygame.HWSURFACE
         self._screen = pygame.display.set_mode(self.screen_size, self.flags)
-        self.screen = self._screen.convert().subsurface(0,0,800,600)
+        self.screen = self._screen.convert().subsurface(0,0,320,240)
         
         self.clock = pygame.time.Clock()
         self.fps = 60
 
         self.scene = None
+
+        self.frames = {}
+        self.sounds = {}
+
+        self.loader = Loader()
+        self.loader.image2load = 'sprite_sheet.png'
+        self.loader.json_file = data.filepath('sprites.json')
+        self.loader.sounds2load = [
+            'DST-Defunkt.mp3',
+        ]
+
+
+        self.loader.start()
+        self.music = pygame.mixer.Channel(3)
 
     def loop(self):
         while True:
@@ -38,6 +54,8 @@ class Control():
             pygame.display.update()
             self.clock.tick(self.fps)
 
+            
+
     def change_scene(self, scene):
         self.scene = scene
 
@@ -50,6 +68,6 @@ class Control():
 
 def main():
     ctrl = Control()
-    scene = MainMenuScene(ctrl)
+    scene = SplashScene(ctrl)
     ctrl.change_scene(scene)
     ctrl.loop()

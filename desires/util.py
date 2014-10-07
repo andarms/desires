@@ -3,9 +3,9 @@ import data
 
 pygame.init()
 
-nfont = pygame.font.Font(data.filepath('visitor2.ttf', 'fonts'), 40)
-bfont = pygame.font.Font(data.filepath('visitor2.ttf', 'fonts'), 70)
-tfont = pygame.font.Font(data.filepath('color-basic.ttf', 'fonts'), 70)
+nfont = pygame.font.Font(data.filepath('visitor2.ttf', 'fonts'), 25)
+bfont = pygame.font.Font(data.filepath('visitor2.ttf', 'fonts'), 35)
+tfont = pygame.font.Font(data.filepath('color-basic.ttf', 'fonts'), 35)
 
 class Option:
     def __init__(self, text, func, x, y, args=None):

@@ -36,6 +36,30 @@ class TestScene():
         screen.blit(text, (0,0))
 
 
+class SplashScene(Scene):
+    def __init__(self, ctrl):
+        super(SplashScene, self).__init__(ctrl)
+        self.image = pygame.image.load(data.imagepath('splash.png'))
+        self.ticks = 0
+
+    def handle_events(self):
+        pass
+
+    def update(self):
+        if self.ctrl.loader.done and self.ticks > 120:
+            self.ctrl.frames = self.ctrl.loader.frames
+            self.ctrl.sounds = self.ctrl.loader.sounds
+
+            scene = MainMenuScene(self.ctrl)
+            self.ctrl.change_scene(scene)
+
+        self.ticks += 1
+
+    def render(self, screen):
+        screen.blit(self.image, (0,0))
+
+
+
 class MenuScene(Scene):
     def __init__(self, ctrl):
         super(MenuScene, self).__init__(ctrl)
@@ -48,8 +72,8 @@ class MenuScene(Scene):
 
     def prepare_options(self):
         x = 20
-        y = self.ctrl.screen_size[1]/2
-        line_height = 50
+        y = 100
+        line_height = 25
         for text, func in self.options:
             if type(func) == list:
                 op = u.NestedOption(text, func, x, y)
@@ -126,6 +150,8 @@ class MainMenuScene(MenuScene):
         self.prepare_options()
         self.title = u.tfont.render('Desires', 1, (255,255,255))
 
+        self.ctrl.music.play(self.ctrl.sounds['DST-Defunkt'], -1)
+
 
     def render(self, screen):
         super(MainMenuScene, self).render(screen)
@@ -150,6 +176,8 @@ class MainMenuScene(MenuScene):
         scene = CreditsScene(self.ctrl)
         scene.back_scene = self
         self.ctrl.change_scene(scene)
+
+
 
 
 class PlayScene(Scene):
