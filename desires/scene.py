@@ -88,6 +88,7 @@ class MenuScene(Scene):
     def handle_events(self):
         key = pygame.key.get_pressed()
         o = self.rendered_options[self.curr_index]
+        sound = self.ctrl.sounds['menu']
 
         if not self.hold and not self.first:
             if key[pygame.K_RETURN]:
@@ -98,23 +99,35 @@ class MenuScene(Scene):
                 if self.curr_index >= len(self.rendered_options):
                     self.curr_index = 0
 
+                self.ctrl.sfx.play(sound)
+
             if key[pygame.K_UP]:
                 self.curr_index -= 1
                 if self.curr_index < 0:
                     self.curr_index = len(self.rendered_options) - 1
 
+                self.ctrl.sfx.play(sound)
+
             if key[pygame.K_LEFT]:
                 if isinstance(o, u.NestedOption):
                     o.handle_events(-1)
+
+
+                self.ctrl.sfx.play(sound)
 
             if key[pygame.K_RIGHT]:                
                 if isinstance(o, u.NestedOption):
                     o.handle_events(1)
 
+                self.ctrl.sfx.play(sound)
+
+
+
 
         keys = (key[pygame.K_UP], key[pygame.K_DOWN], key[pygame.K_RETURN],
                key[pygame.K_LEFT], key[pygame.K_RIGHT])
         self.hold =  any(keys)
+
 
         # wait to pass here more than once
         self.first = False 
@@ -150,8 +163,7 @@ class MainMenuScene(MenuScene):
         self.prepare_options()
         self.title = u.tfont.render('Desires', 1, (255,255,255))
 
-        # self.ctrl.music.play(self.ctrl.sounds['DST-Defunkt'], -1)
-        self.ctrl.sounds['DST-Defunkt'].play()
+        self.ctrl.music.play(self.ctrl.sounds['DST-Defunkt'], -1)
 
 
     def render(self, screen):
@@ -184,7 +196,7 @@ class MainMenuScene(MenuScene):
 class PlayScene(Scene):
     def __init__(self, ctrl):
         super(PlayScene, self).__init__(ctrl)
-        self.player = player.Player()
+        self.player = player.Player(self.ctrl)
 
     def handle_events(self):
         key = pygame.key.get_pressed()

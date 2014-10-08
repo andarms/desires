@@ -24,12 +24,14 @@ class Control():
         self.loader.image2load = 'sprite_sheet.png'
         self.loader.json_file = data.filepath('sprites.json')
         self.loader.sounds2load = [
-            'DST-Defunkt.mp3',
+            'DST-Defunkt.ogg',
+            'menu.wav',
         ]
 
 
         self.loader.start()
         self.music = pygame.mixer.Channel(3)
+        self.sfx = pygame.mixer.Channel(4)
 
     def loop(self):
         while True:

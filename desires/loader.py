@@ -59,11 +59,8 @@ class Loader(Thread):
         for s in self.sounds2load:
             name = s[:-4]
             s = data.filepath(s, 'sounds')
-            print s
             sound = pygame.mixer.Sound(s)
             sounds[name] = sound
-
-        print sounds
         return sounds
 
     def run(self):
