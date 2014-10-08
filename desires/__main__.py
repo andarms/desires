@@ -5,6 +5,8 @@ import data
 from .scene import TestScene, SplashScene
 from loader import Loader
 
+# global FRAMES = {}
+
 class Control():
     def __init__(self):
         self.screen_size = (640,480)

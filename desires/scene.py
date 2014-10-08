@@ -3,6 +3,8 @@ import pygame
 import data, player
 import util as u
 
+# FRAMES = global FRAMES
+
 class Scene(object):
     def __init__(self, ctrl):
         self.ctrl = ctrl
@@ -163,7 +165,7 @@ class MainMenuScene(MenuScene):
         self.prepare_options()
         self.title = u.tfont.render('Desires', 1, (255,255,255))
 
-        self.ctrl.music.play(self.ctrl.sounds['DST-Defunkt'], -1)
+        # self.ctrl.music.play(self.ctrl.sounds['DST-Defunkt'], -1)
 
 
     def render(self, screen):

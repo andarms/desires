@@ -64,7 +64,7 @@
 	"pivot": {"x":0.5,"y":0.5}
 },
 {
-	"filename": "weapons/12.png",
+	"filename": "weapons/ak47.png",
 	"frame": {"x":2,"y":200,"w":32,"h":8},
 	"rotated": false,
 	"trimmed": false,
@@ -109,7 +109,7 @@
 	"pivot": {"x":0.5,"y":0.5}
 },
 {
-	"filename": "weapons/rifle.png",
+	"filename": "weapons/shotgun.png",
 	"frame": {"x":28,"y":190,"w":32,"h":8},
 	"rotated": false,
 	"trimmed": false,
@@ -124,6 +124,6 @@
 	"format": "RGBA8888",
 	"size": {"w":62,"h":210},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:2b5595d5722086588ccf18ba002858fc:0d1d1f0ba44c6547f91907170e9e3f6d:9b4ff79787e23e0dacb235f9ec5c4c7e$"
+	"smartupdate": "$TexturePacker:SmartUpdate:426ef72d4b31791f8da2af9e521bc962:19994eee89f3a086dc9277677e4520a7:9b4ff79787e23e0dacb235f9ec5c4c7e$"
 }
 }

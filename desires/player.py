@@ -1,10 +1,14 @@
 import time
 import pygame
 
+from weapons import *
+
 LEFT = 'left'
 RIGHT = 'right'
 UP = 'up'
 DOWN = 'down'
+
+
 
 class Player(pygame.sprite.Sprite):
 
@@ -35,6 +39,8 @@ class Player(pygame.sprite.Sprite):
 
         self.animate_timer = 0.0
         self.animate_fps = 7.0
+
+        self.weapon = Ak47(self.ctrl, self.rect.top, self.rect.left)
 
     def get_frame(self, frames):
         if self.curr_frame  < len(frames) - 1:
@@ -104,8 +110,11 @@ class Player(pygame.sprite.Sprite):
             self.vx = 0
             self.vy = 0
 
+            self.weapon.update(self.rect, self.orientation)
+
             self.animate_timer = now
 
 
     def render(self, screen):        
         screen.blit(self.image, self.rect)
+        self.weapon.render(screen)
