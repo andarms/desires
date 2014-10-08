@@ -150,7 +150,8 @@ class MainMenuScene(MenuScene):
         self.prepare_options()
         self.title = u.tfont.render('Desires', 1, (255,255,255))
 
-        self.ctrl.music.play(self.ctrl.sounds['DST-Defunkt'], -1)
+        # self.ctrl.music.play(self.ctrl.sounds['DST-Defunkt'], -1)
+        self.ctrl.sounds['DST-Defunkt'].play()
 
 
     def render(self, screen):
