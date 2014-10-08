@@ -1,6 +1,10 @@
 import time
 import pygame
 
+LEFT = 'left'
+RIGHT = 'right'
+UP = 'up'
+DOWN = 'down'
 
 class Player(pygame.sprite.Sprite):
 
@@ -11,24 +15,26 @@ class Player(pygame.sprite.Sprite):
         self.image = self.ctrl.frames['hero/normal']
         self.walk_frames = [
             self.ctrl.frames['hero/walk-0'],
-            self.ctrl.frames['hero/walk-1']
+            self.ctrl.frames['hero/walk-1'],
+            self.ctrl.frames['hero/walk-2'],
+            self.ctrl.frames['hero/walk-3'],
         ]
         self.rect = self.image.get_rect()
 
-        self.speed = .50
+        self.speed = 5
         self.vx = 0
         self.vy = 0
 
         self.runing = False
-        self.x_direction = 'ltr'
-        self.y_direction = None
+        self.orientation = 'ltr'
+        self.direction = LEFT
 
         self.rect.center = (200,220)
 
         self.curr_frame = 0
 
-        self.anim_vel = 100
-        self.start_time = 0
+        self.animate_timer = 0.0
+        self.animate_fps = 7.0
 
     def get_frame(self, frames):
         if self.curr_frame  < len(frames) - 1:
@@ -40,50 +46,65 @@ class Player(pygame.sprite.Sprite):
 
     def handle_events(self, key):
         self.runing = False
+        # self.x_direction = None
         self.y_direction = None
 
         if key[pygame.K_RIGHT]:
             self.runing = True
-            self.x_direction = 'ltr'
+            self.orientation = 'ltr'
+            self.direction = RIGHT
 
         if key[pygame.K_LEFT]:
             self.runing = True
-            self.x_direction = 'rtl'
+            self.orientation = 'rtl'
+            self.direction = LEFT
 
         if key[pygame.K_UP]:
             self.runing = True
-            self.y_direction = 'utd'
+            self.direction = UP
 
         if key[pygame.K_DOWN]:
             self.runing = True
-            self.y_direction = 'dtu'
+            self.direction = DOWN
 
 
     def update(self):
-        time = pygame.time.get_ticks()
-        if time - self.start_time > self.anim_vel:
-            self.start_time = time
+        now = pygame.time.get_ticks()
+        if now-self.animate_timer > 1000/self.animate_fps:            
 
             if self.runing:
-                frame = self.get_frame(self.walk_frames)
-                if self.x_direction == 'ltr':
+                
+                if self.direction == RIGHT:
                     self.vx += self.speed
+                elif self.direction == LEFT:
+                    self.vx -= self.speed                
+                elif self.direction == UP:
+                    self.vy -= self.speed
+                elif self.direction == DOWN:            
+                    self.vy += self.speed
+
+                frame = self.get_frame(self.walk_frames)
+                if self.orientation == 'ltr':
                     self.image = self.walk_frames[frame]
                 else:
-                    self.vx -= self.speed
                     self.image = pygame.transform.flip(self.walk_frames[frame],1,0)
 
-                if self.y_direction is not None:
-                    if self.y_direction == 'utd':
-                        self.vy -= self.speed
-                    else:            
-                        self.vy += self.speed
+
             else:
-                self.vx = 0
-                self.vy = 0
+                frame = self.ctrl.frames['hero/normal']
+                if self.orientation == 'ltr':
+                    self.image = frame
+                else:
+                    self.image = pygame.transform.flip(frame,1,0)
+
 
             self.rect.left += self.vx
             self.rect.top += self.vy
+
+            self.vx = 0
+            self.vy = 0
+
+            self.animate_timer = now
 
 
     def render(self, screen):        
