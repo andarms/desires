@@ -1,3 +1,4 @@
+import math
 import time
 import pygame
 
@@ -8,7 +9,15 @@ RIGHT = 'right'
 UP = 'up'
 DOWN = 'down'
 
+# taken from https://github.com/Mekire/meks-pygame-samples/blob/master/eight_dir_movement_adjusted.py
 
+DIRECT_DICT = {pygame.K_LEFT  : (-1, 0),
+               pygame.K_RIGHT : ( 1, 0),
+               pygame.K_UP    : ( 0,-1),
+               pygame.K_DOWN  : ( 0, 1)}
+
+#X and Y Component magnitude when moving at 45 degree angles
+ANGLE_UNIT_SPEED = math.sqrt(2)/2
 
 class Player(pygame.sprite.Sprite):
 
@@ -25,15 +34,18 @@ class Player(pygame.sprite.Sprite):
         ]
         self.rect = self.image.get_rect()
 
-        self.speed = 5
-        self.vx = 0
-        self.vy = 0
+        
+
+        # movement base on Mekire's samples
+        self.move = list(self.rect.center)
+        self.speed = 50
+        self.vector = [0, 0]
 
         self.runing = False
         self.orientation = 'ltr'
         self.direction = LEFT
 
-        self.rect.center = (200,220)
+        self.rect.center = (100, 120)
 
         self.curr_frame = 0
 
@@ -50,34 +62,54 @@ class Player(pygame.sprite.Sprite):
 
         return self.curr_frame
 
-    def handle_events(self, key):
+    def handle_events1(self, keys):
         self.runing = False
         # self.x_direction = None
         self.y_direction = None
 
-        if key[pygame.K_RIGHT]:
+        if keys[pygame.K_RIGHT]:
             self.runing = True
             self.orientation = 'ltr'
             self.direction = RIGHT
 
-        if key[pygame.K_LEFT]:
+        if keys[pygame.K_LEFT]:
             self.runing = True
             self.orientation = 'rtl'
             self.direction = LEFT
 
-        if key[pygame.K_UP]:
+        if keys[pygame.K_UP]:
             self.runing = True
             self.direction = UP
 
-        if key[pygame.K_DOWN]:
+        if keys[pygame.K_DOWN]:
             self.runing = True
             self.direction = DOWN
 
-        if key[pygame.K_d]:
+        if keys[pygame.K_d]:
             self.weapon.generate_bullet()
 
+    def update(self, keys ,screen_rect):
 
-    def update(self):
+        # movement base on Mekire's samples
+        self.vector = [0, 0]
+        for key in DIRECT_DICT:
+            if keys[key]:
+                self.vector[0] += DIRECT_DICT[key][0]
+                self.vector[1] += DIRECT_DICT[key][1]
+        factor = (ANGLE_UNIT_SPEED if all(self.vector) else 1)
+        frame_speed = self.speed*factor*self.ctrl.td
+        self.move[0] += self.vector[0]*frame_speed
+        self.move[1] += self.vector[1]*frame_speed
+        self.rect.center = self.move
+        if not screen_rect.contains(self.rect):
+            self.rect.clamp_ip(screen_rect)
+            self.move = list(self.rect.center)
+
+        self.weapon.update(self.rect, self.orientation)
+
+
+
+    def update1(self):
         now = pygame.time.get_ticks()
         if now-self.animate_timer > 1000/self.animate_fps:            
 

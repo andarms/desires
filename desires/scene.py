@@ -200,23 +200,25 @@ class PlayScene(Scene):
         super(PlayScene, self).__init__(ctrl)
         self.player = player.Player(self.ctrl)
         self.bg_color = (255,255,255)
+        # self.keys = pygame.key.get_pressed()
 
     def handle_events(self):
-        key = pygame.key.get_pressed()
+        # self.keys = pygame.key.get_pressed()
+        pass
 
         # if not self.hold:
         #     if key[pygame.K_q]:
         #         self.back_scene()
 
-        self.player.handle_events(key)
+        # self.player.handle_events(keys)
 
         # keys = (key[pygame.K_UP], key[pygame.K_DOWN], key[pygame.K_RETURN],
         #        key[pygame.K_LEFT], key[pygame.K_RIGHT])
         # self.hold =  key[pygame.K_q]
 
 
-    def update(self):
-        self.player.update()
+    def update(self):        
+        self.player.update(self.ctrl.keys, self.ctrl.screen_rect)
 
     def render(self, screen):
         screen.fill(self.bg_color)

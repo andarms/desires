@@ -3,7 +3,11 @@ import pygame
 class Bullet(pygame.Rect):
     def __init__(self, (x, y), w, h, target):
         super(Bullet, self).__init__(x, y, w, h)
+        init_x, init_y = x, y
         self.tx, self.ty = target
+        self.x_reach = False
+        self.y_reach = False
+
 
         self.x_opration = '+'
         if self.x < self.left:
@@ -15,19 +19,37 @@ class Bullet(pygame.Rect):
 
         self.speed = 5
 
+
+
     def update(self):
-        if self.x_opration == '+' and self.left != self.tx:
-            self.left += self.speed
-        else:
-            self.left += self.speed
 
-        if self.y_opration == '+' and self.top != self.ty:
-            self.top += self.speed
+        if self.x_opration == '+':
+            if self.left <= self.tx:
+                self.left += self.speed
+            else:
+                self.x_reach = True
         else:
-            self.top += self.speed
+            if self.left > self.tx:
+                self.left -= self.speed
+            else:
+                self.x_reach = True   
 
-        if self.tx == self.left and self.ty == self.top:
+        if self.y_opration == '+':
+            if self.top <= self.ty:
+                self.top += self.speed
+            else:
+                self.y_reach = True
+        else:
+            if self.top >= self.ty:
+                self.top -= self.speed
+            else:
+                self.y_reach = True   
+
+        if self.x_reach and self.y_reach:
             del(self)
+
+
+
 
 
     def render(self, screen):
@@ -42,7 +64,7 @@ class Weapon(pygame.sprite.Sprite):
         self.bullets = []
 
     def generate_bullet(self):
-        b = Bullet(self.rect.center, 1,1, (100,100))
+        b = Bullet(self.rect.center, 2,2, (100,100))
         self.bullets.append(b)
 
     def update(self, p_rect, orientation):
@@ -64,7 +86,7 @@ class Weapon(pygame.sprite.Sprite):
         screen.blit(self.image, self.rect)
 
         for bullet in self.bullets:
-            bullet.update()
+            bullet.render(screen)
 
 
 class Ak47(Weapon):
