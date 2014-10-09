@@ -40,7 +40,7 @@ class Player(pygame.sprite.Sprite):
         self.animate_timer = 0.0
         self.animate_fps = 7.0
 
-        self.weapon = Ak47(self.ctrl, self.rect.top, self.rect.left)
+        self.weapon = Ak47(self.ctrl,  self.rect.left, self.rect.top)
 
     def get_frame(self, frames):
         if self.curr_frame  < len(frames) - 1:
@@ -72,6 +72,9 @@ class Player(pygame.sprite.Sprite):
         if key[pygame.K_DOWN]:
             self.runing = True
             self.direction = DOWN
+
+        if key[pygame.K_d]:
+            self.weapon.generate_bullet()
 
 
     def update(self):
