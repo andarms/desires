@@ -3,7 +3,7 @@ Desires
 
 Entry in PyWeek #19  <https://pyweek.org/e/another-chance/>
 
-DEPENDENCIES:
+Dependencies:
 ------------
 You might need to install some of these before running the game:
 

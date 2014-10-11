@@ -1,6 +1,6 @@
 import pygame
 
-import data, player
+import camera, data, level, player
 import util as u
 
 # FRAMES = global FRAMES
@@ -88,36 +88,36 @@ class MenuScene(Scene):
 
 
     def handle_events(self):
-        key = pygame.key.get_pressed()
+        keys = self.ctrl.keys
         o = self.rendered_options[self.curr_index]
         sound = self.ctrl.sounds['menu']
 
         if not self.hold and not self.first:
-            if key[pygame.K_RETURN]:
+            if keys[pygame.K_RETURN]:
                 o.func()
 
-            if key[pygame.K_DOWN]:
+            if keys[pygame.K_DOWN]:
                 self.curr_index += 1
                 if self.curr_index >= len(self.rendered_options):
                     self.curr_index = 0
 
                 self.ctrl.sfx.play(sound)
 
-            if key[pygame.K_UP]:
+            if keys[pygame.K_UP]:
                 self.curr_index -= 1
                 if self.curr_index < 0:
                     self.curr_index = len(self.rendered_options) - 1
 
                 self.ctrl.sfx.play(sound)
 
-            if key[pygame.K_LEFT]:
+            if keys[pygame.K_LEFT]:
                 if isinstance(o, u.NestedOption):
                     o.handle_events(-1)
 
 
                 self.ctrl.sfx.play(sound)
 
-            if key[pygame.K_RIGHT]:                
+            if keys[pygame.K_RIGHT]:                
                 if isinstance(o, u.NestedOption):
                     o.handle_events(1)
 
@@ -126,9 +126,9 @@ class MenuScene(Scene):
 
 
 
-        keys = (key[pygame.K_UP], key[pygame.K_DOWN], key[pygame.K_RETURN],
-               key[pygame.K_LEFT], key[pygame.K_RIGHT])
-        self.hold =  any(keys)
+        keys_pressed = (keys[pygame.K_UP], keys[pygame.K_DOWN], keys[pygame.K_RETURN],
+               keys[pygame.K_LEFT], keys[pygame.K_RIGHT])
+        self.hold =  any(keys_pressed)
 
 
         # wait to pass here more than once
@@ -163,7 +163,7 @@ class MainMenuScene(MenuScene):
         ]
 
         self.prepare_options()
-        self.title = u.tfont.render('Desires', 1, (255,255,255))
+        self.title = u.tfont.render('Limbo Room', 1, (255,255,255))
 
         # self.ctrl.music.play(self.ctrl.sounds['DST-Defunkt'], -1)
 
@@ -200,27 +200,23 @@ class PlayScene(Scene):
         super(PlayScene, self).__init__(ctrl)
         self.player = player.Player(self.ctrl)
         self.bg_color = (255,255,255)
-        # self.keys = pygame.key.get_pressed()
+        w, h = self.ctrl.screen.get_size()
+        self.camera = camera.Camera(self.player.rect, w, h)
+        self.bg = self.ctrl.frames['back']
+        self.level = level.Level('data/map.tmx')
 
     def handle_events(self):
-        # self.keys = pygame.key.get_pressed()
-        pass
-
-        # if not self.hold:
-        #     if key[pygame.K_q]:
-        #         self.back_scene()
-
-        # self.player.handle_events(keys)
-
-        # keys = (key[pygame.K_UP], key[pygame.K_DOWN], key[pygame.K_RETURN],
-        #        key[pygame.K_LEFT], key[pygame.K_RIGHT])
-        # self.hold =  key[pygame.K_q]
+        self.player.handle_events(self.ctrl.keys)
 
 
     def update(self):        
         self.player.update(self.ctrl.keys, self.ctrl.screen_rect)
+        self.camera.update(self.player.rect, self.level)
 
     def render(self, screen):
-        screen.fill(self.bg_color)
+        # screen.fill(self.bg_color)
+        screen.blit(self.bg, (0,0))
         # to change
-        self.player.render(screen)
+        self.player.render(screen, self.camera)
+        self.level.render(screen, self.camera)
+        pygame.display.update(self.camera)

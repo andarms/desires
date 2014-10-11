@@ -82,8 +82,9 @@ class Weapon(pygame.sprite.Sprite):
         for bullet in self.bullets:
             bullet.update()
 
-    def render(self, screen):
-        screen.blit(self.image, self.rect)
+    def render(self, screen, camera):
+        screen.blit(self.image, (self.rect.left - camera.left,
+                                 self.rect.top - camera.top))
 
         for bullet in self.bullets:
             bullet.render(screen)
@@ -95,7 +96,7 @@ class Ak47(Weapon):
         self.normal = self.ctrl.frames['weapons/ak47']
         self.image = self.normal
         self.rect = self.image.get_rect()
-        self.relative_y = 24
+        self.relative_y = 21
         self.rect.left = x
         self.rect.top = self.relative_y + y
 
@@ -106,7 +107,7 @@ class Hkg36(Weapon):
         self.normal = self.ctrl.frames['weapons/hkg36']
         self.image = self.normal
         self.rect = self.image.get_rect()
-        self.relative_y = 24
+        self.relative_y = 21
         self.rect.left = x
         self.rect.top = self.relative_y + y
 
@@ -117,7 +118,7 @@ class Shotgun(Weapon):
         self.normal = self.ctrl.frames['weapons/shotgun']
         self.image = self.normal
         self.rect = self.image.get_rect()
-        self.relative_y = 24
+        self.relative_y = 21
         self.rect.left = x
         self.rect.top = self.relative_y + y
 
@@ -127,7 +128,7 @@ class Flamethrower(Weapon):
         self.normal = self.ctrl.frames['weapons/flamethrower']
         self.image = self.normal
         self.rect = self.image.get_rect()
-        self.relative_y = 16
+        self.relative_y = 13
         self.rect.left = x
         self.rect.top = self.relative_y + y
 
@@ -138,7 +139,7 @@ class Chainsaw(Weapon):
         self.normal = self.ctrl.frames['weapons/chainsaw-0']
         self.image = self.normal
         self.rect = self.image.get_rect()
-        self.relative_y = 24
+        self.relative_y = 21
         self.rect.left = x
         self.rect.top = self.relative_y + y
 
