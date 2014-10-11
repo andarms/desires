@@ -13,11 +13,13 @@ class Level:
         l = self.tiledmap.getTileLayerByName('collition')
         self.collition_layer = self.tiledmap.tilelayers.index(l)
 
-        self.upper_layer = []
-        for layer_name in ('trees', 'shrubs','assets'):
+        self.layers = []
+        for layer_name in ('below', 'above'):
             l = self.tiledmap.getTileLayerByName(layer_name)
             layer = self.tiledmap.tilelayers.index(l)
-            self.upper_layer.append(layer)
+            self.layers.append(layer)
+
+        
 
 
         self.left_edge = 0
@@ -26,6 +28,8 @@ class Level:
         self.bottom_edge = self.tiledmap.height * self.th
 
         self.objects =  self.tiledmap.getObjects()
+
+        self.tile_rect = pygame.Rect(0,0, self.tw, self.th)
 
 
         """
@@ -45,9 +49,9 @@ class Level:
         self.view_y2 = 15
 
 
-    def render(self, screen,  camera):
-        r = pygame.Rect(0,0, self.tw, self.th)
-        for layer in self.upper_layer:
+    def render(self, screen, camera):
+        r = self.tile_rect
+        for layer in self.layers:
             for y in xrange(self.view_y1, self.view_y2):
                 for x in xrange(self.view_x1, self.view_x2):
                     r.x = x*self.tw

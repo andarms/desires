@@ -199,10 +199,9 @@ class PlayScene(Scene):
     def __init__(self, ctrl):
         super(PlayScene, self).__init__(ctrl)
         self.player = player.Player(self.ctrl)
-        self.bg_color = (255,255,255)
+        self.bg_color = (100, 128, 64)
         w, h = self.ctrl.screen.get_size()
         self.camera = camera.Camera(self.player.rect, w, h)
-        self.bg = self.ctrl.frames['back']
         self.level = level.Level('data/map.tmx')
 
     def handle_events(self):
@@ -210,13 +209,13 @@ class PlayScene(Scene):
 
 
     def update(self):        
-        self.player.update(self.ctrl.keys, self.ctrl.screen_rect)
+        self.player.update(self.ctrl.keys, self.level)
         self.camera.update(self.player.rect, self.level)
 
     def render(self, screen):
-        # screen.fill(self.bg_color)
-        screen.blit(self.bg, (0,0))
+        screen.fill(self.bg_color)
+        # screen.blit(self.bg, (0,0))
         # to change
-        self.player.render(screen, self.camera)
         self.level.render(screen, self.camera)
+        self.player.render(screen, self.camera)
         pygame.display.update(self.camera)

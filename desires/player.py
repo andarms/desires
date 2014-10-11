@@ -28,18 +28,19 @@ class Player(pygame.sprite.Sprite):
         ]
         self.rect = self.image.get_rect()
 
-        
-
-        # movement base on Mekire's samples
-        self.move = list(self.rect.center)
-        self.speed = 150
-        self.vector = [0, 0]
-
         self.runing = False
         self.orientation = 'ltr'
         
 
+        self.rect.height = 8
+        self.rect.top += 56
         self.rect.center = (100, 120)
+
+         # movement base on Mekire's samples
+        self.move = list(self.rect.center)
+        self.old_move = self.move
+        self.speed = 150
+        self.vector = [0, 0]
 
         self.curr_frame = 0
 
@@ -55,6 +56,23 @@ class Player(pygame.sprite.Sprite):
             self.curr_frame = 0
 
         return self.curr_frame
+
+
+    def collide(self, level, delta, index):
+        rect = level.tile_rect
+        for y in xrange(level.view_y1, level.view_y2):
+            for x in xrange(level.view_x1, level.view_x2):
+                rect.x = x*level.tw
+                rect.y =  y*level.th
+                tile = level.get_tile_image(x, y, level.collition_layer)
+                if tile != 0:
+                    if self.rect.colliderect(rect):
+                        self.move[index] -= delta
+                        self.rect.center = self.move
+
+
+                        
+
 
     def handle_events(self, keys):
         self.runing = False
@@ -78,8 +96,7 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_d]:
             self.weapon.generate_bullet()
 
-    def update(self, keys ,screen_rect):
-
+    def update(self, keys, level):
         # movement base on Mekire's samples
         self.vector = [0, 0]
         for key in DIRECT_DICT:
@@ -91,18 +108,18 @@ class Player(pygame.sprite.Sprite):
         self.move[0] += self.vector[0]*frame_speed
         self.move[1] += self.vector[1]*frame_speed
         self.rect.center = self.move
-        # if not screen_rect.contains(self.rect):
-        #     self.rect.clamp_ip(screen_rect)
-        #     self.move = list(self.rect.center)
+        self.old_move = self.move
+        self.collide(level, self.vector[0]*frame_speed, 0)
+        self.collide(level, self.vector[1]*frame_speed, 1)
 
         now = pygame.time.get_ticks()
         if now-self.animate_timer > 1000/self.animate_fps:
             if self.runing:
-                    frame = self.get_frame(self.walk_frames)
-                    if self.orientation == 'ltr':
-                        self.image = self.walk_frames[frame]
-                    else:
-                        self.image = pygame.transform.flip(self.walk_frames[frame],1,0)
+                frame = self.get_frame(self.walk_frames)
+                if self.orientation == 'ltr':
+                    self.image = self.walk_frames[frame]
+                else:
+                    self.image = pygame.transform.flip(self.walk_frames[frame],1,0)
 
             else:
                 frame = self.ctrl.frames['hero/normal']
@@ -119,5 +136,5 @@ class Player(pygame.sprite.Sprite):
 
     def render(self, screen, camera):        
         screen.blit(self.image, (self.rect.left - camera.left,
-                                 self.rect.top - camera.top))
+                                 self.rect.top - 56 - camera.top))
         self.weapon.render(screen, camera)
