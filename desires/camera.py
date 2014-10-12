@@ -33,5 +33,3 @@ class Camera(pygame.Rect):
         level.view_x2 = (self.right / level.tw) + 1
         level.view_y1 = (self.top / level.tw) - 1
         level.view_y2 = (self.bottom / level.tw) + 1
-        
-        return self

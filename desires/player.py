@@ -3,6 +3,8 @@ import time
 import pygame
 
 from weapons import *
+from pickups import Pickup
+from level import Msg
 
 # taken from https://github.com/Mekire/meks-pygame-samples/blob/master/eight_dir_movement_adjusted.py
 DIRECT_DICT = {pygame.K_LEFT  : (-1, 0),
@@ -16,9 +18,10 @@ ANGLE_UNIT_SPEED = math.sqrt(2)/2
 class Player(pygame.sprite.Sprite):
 
 
-    def __init__(self, ctrl):
+    def __init__(self, ctrl, game):
         super(Player, self).__init__()
         self.ctrl = ctrl
+        self.game = game
         self.image = self.ctrl.frames['hero/normal']
         self.walk_frames = [
             self.ctrl.frames['hero/walk-0'],
@@ -27,18 +30,23 @@ class Player(pygame.sprite.Sprite):
             self.ctrl.frames['hero/walk-3'],
         ]
         self.rect = self.image.get_rect()
+        self._rect = self.rect.copy()
 
         self.runing = False
         self.orientation = 'ltr'
-        
+        self.health = 100
+        self.power = 0        
 
-        self.rect.height = 8
-        self.rect.top += 56
+        
         self.rect.center = (200, 120)
+        self._rect.left = self.rect.left
+        self._rect.bottom = self.rect.bottom
+        self._rect.height = 8
+        self._rect.top += 56
+
 
          # movement base on Mekire's samples
         self.move = list(self.rect.center)
-        self.old_move = self.move
         self.speed = 150
         self.vector = [0, 0]
 
@@ -66,9 +74,22 @@ class Player(pygame.sprite.Sprite):
                 rect.y =  y*level.th
                 tile = level.get_tile_image(x, y, level.collition_layer)
                 if tile != 0:
-                    if self.rect.colliderect(rect):
+                    if self._rect.colliderect(rect):
                         self.move[index] -= delta
                         self.rect.center = self.move
+                        self._rect.left = self.rect.left
+                        self._rect.bottom = self.rect.bottom
+
+        for o  in self.game.objects:
+            if isinstance(o, pygame.sprite.Sprite):
+                if self.rect.colliderect(o.rect):
+                    o.pickup(self)
+                    if isinstance(o, Pickup):
+                        self.game.objects.remove(o)
+            
+            if isinstance(o, Msg):
+                if self.rect.colliderect(o):
+                    o.pickup(self)
 
 
                         
@@ -94,7 +115,17 @@ class Player(pygame.sprite.Sprite):
 
 
         if keys[pygame.K_d]:
-            self.weapon.generate_bullet()
+            x, y = self.rect.center
+            x -= self.game.camera.left
+            y -= self.game.camera.top
+
+            i = self.game.enemies.get_closer(self, self.game.entities)
+
+            tx, ty = self.game.entities[i].rect.center
+            tx -= self.game.camera.left
+            ty -= self.game.camera.top
+
+            self.weapon.generate_bullet((x, y), (tx,ty), self.game.entities[i])
 
     def update(self, keys, level):
         # movement base on Mekire's samples
@@ -108,7 +139,10 @@ class Player(pygame.sprite.Sprite):
         self.move[0] += self.vector[0]*frame_speed
         self.move[1] += self.vector[1]*frame_speed
         self.rect.center = self.move
-        self.old_move = self.move
+
+        self._rect.left = self.rect.left
+        self._rect.bottom = self.rect.bottom
+
         self.collide(level, self.vector[0]*frame_speed, 0)
         self.collide(level, self.vector[1]*frame_speed, 1)
 
@@ -132,9 +166,12 @@ class Player(pygame.sprite.Sprite):
         
         self.weapon.update(self.rect, self.orientation)
 
+        if self.health <= 0:
+            self.game.lose()
+
 
 
     def render(self, screen, camera):        
         screen.blit(self.image, (self.rect.left - camera.left,
-                                 self.rect.top - 56 - camera.top))
+                                 self.rect.top - camera.top))
         self.weapon.render(screen, camera)

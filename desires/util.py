@@ -3,6 +3,8 @@ import data
 
 pygame.init()
 
+sfont = pygame.font.SysFont(data.filepath('terminal.fon', 'fonts'), 12)
+jfont = pygame.font.Font(data.filepath('visitor2.ttf', 'fonts'), 15)
 nfont = pygame.font.Font(data.filepath('visitor2.ttf', 'fonts'), 25)
 bfont = pygame.font.Font(data.filepath('visitor2.ttf', 'fonts'), 35)
 tfont = pygame.font.Font(data.filepath('color-basic.ttf', 'fonts'), 35)

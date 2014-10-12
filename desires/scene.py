@@ -22,7 +22,7 @@ class Scene(object):
         raise NotImplemented("render func have to be implemented")
 
     def back(self):
-        self.manager.change_scene(self.back_scene)
+        self.ctrl.change_scene(self.back_scene)
 
 
 class TestScene():
@@ -97,31 +97,31 @@ class MenuScene(Scene):
                 o.func()
 
             if keys[pygame.K_DOWN]:
+                self.ctrl.sfx.play(sound)
                 self.curr_index += 1
                 if self.curr_index >= len(self.rendered_options):
                     self.curr_index = 0
 
-                self.ctrl.sfx.play(sound)
 
             if keys[pygame.K_UP]:
+                self.ctrl.sfx.play(sound)
                 self.curr_index -= 1
                 if self.curr_index < 0:
                     self.curr_index = len(self.rendered_options) - 1
 
-                self.ctrl.sfx.play(sound)
 
             if keys[pygame.K_LEFT]:
+                self.ctrl.sfx.play(sound)
                 if isinstance(o, u.NestedOption):
                     o.handle_events(-1)
 
 
-                self.ctrl.sfx.play(sound)
 
+                self.ctrl.sfx.play(sound)
             if keys[pygame.K_RIGHT]:                
                 if isinstance(o, u.NestedOption):
                     o.handle_events(1)
 
-                self.ctrl.sfx.play(sound)
 
 
 
@@ -165,7 +165,7 @@ class MainMenuScene(MenuScene):
         self.prepare_options()
         self.title = u.tfont.render('Limbo Room', 1, (255,255,255))
 
-        # self.ctrl.music.play(self.ctrl.sounds['DST-Defunkt'], -1)
+        self.ctrl.music.play(self.ctrl.sounds['DST-Defunkt'], -1)
 
 
     def render(self, screen):
@@ -198,19 +198,48 @@ class MainMenuScene(MenuScene):
 class PlayScene(Scene):
     def __init__(self, ctrl):
         super(PlayScene, self).__init__(ctrl)
-        self.player = player.Player(self.ctrl)
+        self.player = player.Player(self.ctrl, self)
         self.bg_color = (100, 128, 64)
         w, h = self.ctrl.screen.get_size()
         self.camera = camera.Camera(self.player.rect, w, h)
         self.level = level.Level('data/map.tmx')
 
         self.entities = []
+        self.objects = self.level.generate_objects(self.ctrl)
         self.enemies = enemies.EnemyCtrl(self.ctrl, self)
+
+    def draw_info(self):
+        lines = [
+            'Health: {}'.format(self.player.health),
+            'Ammo: {}'.format(self.player.weapon.ammo),
+            'Power: {}'.format(self.player.power)
+        ]
+        rendered = []
+        for l in lines:
+            s = u.sfont.render(l, 1, (255,255,255))
+            rendered.append(s)
+
+        line_height = 14
+        x = y = 1
+        for r in rendered:
+            self.ctrl.screen.blit(r, (x,y))
+            y += line_height
+
+
 
     def render_entities(self):
         for e in self.entities:
             if self.camera.colliderect(e.rect):
                 e.render(self.ctrl.screen, self.camera)
+
+    def render_objects(self):
+        for o in self.objects:
+            if isinstance(o, pygame.sprite.Sprite):
+                if self.camera.colliderect(o.rect):
+                    o.render(self.ctrl.screen, self.camera)
+            else:
+                if self.camera.colliderect(o):
+                    o.render(self.ctrl.screen, self.camera)
 
     def handle_events(self):
         self.player.handle_events(self.ctrl.keys)
@@ -222,6 +251,10 @@ class PlayScene(Scene):
         self.enemies.update()
         for e in self.entities:
             e.update()
+            if e.die:
+                self.entities.remove(e)
+                self.enemies.curr_enemies -= 1
+                self.enemies.player_kills += 1
 
 
     def render(self, screen):
@@ -230,4 +263,66 @@ class PlayScene(Scene):
         self.level.render(screen, self.camera)
         self.player.render(screen, self.camera)
         self.render_entities()
+        self.render_objects()
+        self.draw_info()
         pygame.display.update(self.camera)
+
+    def won(self):
+        scene = WonScene(self.ctrl)
+        self.ctrl.change_scene(scene)
+
+    def lose(self):
+        scene = GameOverScene(self.ctrl)
+        self.ctrl.change_scene(scene)
+
+class WonScene(Scene):
+    def __init__(self, ctrl):
+        super(WonScene, self).__init__(ctrl)
+
+        self.image = self.ctrl.frames['won']
+
+    def handle_events(self):
+        if self.ctrl.keys[pygame.K_SPACE]:
+            self.ctrl.quit()
+
+    def update(self):
+        pass
+
+    def render(self, screen):
+        screen.blit(self.image, (0,0))
+
+
+class GameOverScene(Scene):
+    def __init__(self, ctrl):
+        super(GameOverScene, self).__init__(ctrl)
+
+        self.image = self.ctrl.frames['gameover']
+
+    def handle_events(self):
+        if self.ctrl.keys[pygame.K_SPACE]:
+            scene = MainMenuScene(self.ctrl)
+            self.ctrl.change_scene(scene)
+
+    def update(self):
+        pass
+
+    def render(self, screen):
+        screen.blit(self.image, (0,0))
+
+
+
+class CreditsScene(Scene):
+    def __init__(self, ctrl):
+        super(CreditsScene, self).__init__(ctrl)
+
+        self.image = self.ctrl.frames['credits']
+
+    def handle_events(self):
+        if self.ctrl.keys[pygame.K_SPACE]:
+            self.back()
+
+    def update(self):
+        pass
+
+    def render(self, screen):
+        screen.blit(self.image, (0,0))

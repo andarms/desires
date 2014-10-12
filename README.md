@@ -11,4 +11,9 @@ You might need to install some of these before running the game:
   PyGame:     http://www.pygame.org/
 
 
+How to play:
+-----------
+
+Kills Zombies to collect power to travel.
+move with arrow keys and shot with d. 
 

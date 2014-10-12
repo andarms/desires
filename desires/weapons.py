@@ -1,52 +1,48 @@
 import pygame
 
 class Bullet(pygame.Rect):
-    def __init__(self, (x, y), w, h, target):
+    def __init__(self, (x, y), w, h, target, target_obj, damage):
         super(Bullet, self).__init__(x, y, w, h)
-        init_x, init_y = x, y
-        self.tx, self.ty = target
+        self.move = list((x, y))
+        self.target = target
         self.x_reach = False
         self.y_reach = False
 
+        self.damage = damage
 
-        self.x_opration = '+'
-        if self.x < self.left:
-            self.x_opration = '-'
-
-        self.y_opration = '+'
-        if self.x < self.top:
-            self.y_opration = '-'
-
-        self.speed = 5
-
+        self.speed = 15
+        self.die = False
+        self.target_obj = target_obj
 
 
     def update(self):
 
-        if self.x_opration == '+':
-            if self.left <= self.tx:
-                self.left += self.speed
-            else:
-                self.x_reach = True
-        else:
-            if self.left > self.tx:
-                self.left -= self.speed
-            else:
-                self.x_reach = True   
+        if self.target[0] > self.centerx:
+            self.move[0] += self.speed
+            if self.move[0] > self.target[0]:
+                self.move[0] = self.target[0]
 
-        if self.y_opration == '+':
-            if self.top <= self.ty:
-                self.top += self.speed
-            else:
-                self.y_reach = True
-        else:
-            if self.top >= self.ty:
-                self.top -= self.speed
-            else:
-                self.y_reach = True   
+        elif self.target[0] < self.centerx:
+            self.move[0] -= self.speed
+            if self.move[0] < self.target[0]:
+                self.move[0] = self.target[0] 
 
-        if self.x_reach and self.y_reach:
-            del(self)
+        if self.target[1] > self.centery:
+            self.move[1] += self.speed
+            if self.move[1] > self.target[1]:
+                self.move[1] = self.target[1] 
+        elif self.target[1] < self.centery:
+            self.move[1] -= self.speed
+            if self.move[1] < self.target[1]:
+                self.move[1] = self.target[1]
+
+        self.center = self.move
+
+        if self.colliderect(self.target_obj.d_rect):
+            self.target_obj.health -= self.damage
+
+        if self.center == self.target:
+            self.die = True
 
 
 
@@ -62,15 +58,19 @@ class Weapon(pygame.sprite.Sprite):
         self.ctrl = ctrl
         self.relative_y = None
         self.bullets = []
+        self.fire_rate = 0
+        self.ticks = 0
+        self.ammo = 100
 
-    def generate_bullet(self):
-        b = Bullet(self.rect.center, 2,2, (100,100))
-        self.bullets.append(b)
+    def generate_bullet(self, origin, target, target_obj):
+        if self.ticks > self.fire_rate and self.ammo:
+            b = Bullet(origin, 2,2, target, target_obj, self.damage)
+            self.bullets.append(b)
+            self.ammo -= 1
 
     def update(self, p_rect, orientation):
-        y = p_rect.top
-        y += self.relative_y
-        self.rect.top = y
+        self.ticks += 1
+        self.rect.top = p_rect.top + self.relative_y
         self.rect.left = p_rect.left
 
         if orientation == 'ltr':
@@ -81,13 +81,16 @@ class Weapon(pygame.sprite.Sprite):
 
         for bullet in self.bullets:
             bullet.update()
+            if bullet.die:
+                self.bullets.remove(bullet)
 
     def render(self, screen, camera):
         screen.blit(self.image, (self.rect.left - camera.left,
                                  self.rect.top - camera.top))
 
-        for bullet in self.bullets:
-            bullet.render(screen)
+        if self.bullets:
+            for bullet in self.bullets:
+                bullet.render(screen)
 
 
 class Ak47(Weapon):
@@ -96,9 +99,12 @@ class Ak47(Weapon):
         self.normal = self.ctrl.frames['weapons/ak47']
         self.image = self.normal
         self.rect = self.image.get_rect()
-        self.relative_y = -35
+        self.relative_y = 21
         self.rect.left = x
         self.rect.top = self.relative_y + y
+        self.fire_rate = 3
+        self.damage = 5
+        self.ammo = 300
 
 
 class Hkg36(Weapon):
@@ -107,9 +113,12 @@ class Hkg36(Weapon):
         self.normal = self.ctrl.frames['weapons/hkg36']
         self.image = self.normal
         self.rect = self.image.get_rect()
-        self.relative_y = -35
+        self.relative_y = 21
         self.rect.left = x
         self.rect.top = self.relative_y + y
+        self.fire_rate = 1
+        self.damage = 2
+        self.ammo = 300
 
 
 class Shotgun(Weapon):
@@ -118,9 +127,12 @@ class Shotgun(Weapon):
         self.normal = self.ctrl.frames['weapons/shotgun']
         self.image = self.normal
         self.rect = self.image.get_rect()
-        self.relative_y = -35
+        self.relative_y = 21
         self.rect.left = x
         self.rect.top = self.relative_y + y
+        self.fire_rate = 10
+        self.damage = 70
+        self.ammo = 25
 
 class Flamethrower(Weapon):
     def __init__(self, ctrl, x, y):
@@ -131,6 +143,9 @@ class Flamethrower(Weapon):
         self.relative_y = 13
         self.rect.left = x
         self.rect.top = self.relative_y + y
+        self.fire_rate = 0
+        self.damage = 50
+        self.ammo = 0
 
 
 class Chainsaw(Weapon):
@@ -139,10 +154,14 @@ class Chainsaw(Weapon):
         self.normal = self.ctrl.frames['weapons/chainsaw-0']
         self.image = self.normal
         self.rect = self.image.get_rect()
-        self.relative_y = -35
+        self.relative_y = 21
         self.rect.left = x
         self.rect.top = self.relative_y + y
 
         self.curr_frame = 0
+        self.fire_rate = 0
+
+        self.damage = 80
+        self.ammo = 0
 
 
