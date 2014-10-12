@@ -34,7 +34,7 @@ class Player(pygame.sprite.Sprite):
 
         self.rect.height = 8
         self.rect.top += 56
-        self.rect.center = (100, 120)
+        self.rect.center = (200, 120)
 
          # movement base on Mekire's samples
         self.move = list(self.rect.center)

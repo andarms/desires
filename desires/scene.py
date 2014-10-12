@@ -1,6 +1,6 @@
 import pygame
 
-import camera, data, level, player
+import camera, data, level, player, enemies
 import util as u
 
 # FRAMES = global FRAMES
@@ -204,6 +204,14 @@ class PlayScene(Scene):
         self.camera = camera.Camera(self.player.rect, w, h)
         self.level = level.Level('data/map.tmx')
 
+        self.entities = []
+        self.enemies = enemies.EnemyCtrl(self.ctrl, self)
+
+    def render_entities(self):
+        for e in self.entities:
+            if self.camera.colliderect(e.rect):
+                e.render(self.ctrl.screen, self.camera)
+
     def handle_events(self):
         self.player.handle_events(self.ctrl.keys)
 
@@ -211,11 +219,15 @@ class PlayScene(Scene):
     def update(self):        
         self.player.update(self.ctrl.keys, self.level)
         self.camera.update(self.player.rect, self.level)
+        self.enemies.update()
+        for e in self.entities:
+            e.update()
+
 
     def render(self, screen):
         screen.fill(self.bg_color)
-        # screen.blit(self.bg, (0,0))
         # to change
         self.level.render(screen, self.camera)
         self.player.render(screen, self.camera)
+        self.render_entities()
         pygame.display.update(self.camera)

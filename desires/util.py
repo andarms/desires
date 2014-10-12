@@ -69,3 +69,14 @@ class NestedOption:
     def func(self):
         o = self.options[self.curr_index]
         o.func(o.args)
+
+
+def get_pixel_coords(x, y):
+    px = 16 * x
+    py = 16 * y
+    return px, py
+
+def get_tile_coords((x, y)):
+    tx = x / 16
+    ty = y / 16
+    return tx, ty
